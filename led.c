@@ -16,6 +16,11 @@ unsigned char last;
 
 #define BUTTON_CNT 0x400
 #define BUTTON_CHECK_MASK 0x80
+#define DUTY_CICLE_MAX 0x3F
+
+const unsigned char duties[] = {
+    0x00, 0x10, 0x1A, 0x24, 0x2A, 0x34, 0x38, 0x3A, 0x40
+} ;
 
 void init() {
     OSCCAL &= 0xFE;
@@ -23,7 +28,7 @@ void init() {
     OPTION = 0b00011111;
     
     counter = 0;
-    duty = 0x30;
+    duty = 3;
     last = 0;
     button_cnt = 0;
     on = 1;
@@ -56,10 +61,10 @@ void check_buttons () {
         case 0 : 
             break;
         case 1:
-            if (duty >= 0x10) duty-=0x10;
+            if (duty) duty--;
             break;
         case 2:
-            if (duty < 0x80) duty+=0x10;
+            if (duty < 8) duty++;
             break;
         case 3:
             on = !on;
@@ -70,15 +75,14 @@ void check_buttons () {
 void main(void) {
     if (STATUSbits.nTO) init();
     
-    for(;;counter = (counter+1) & 0x7F) {
+    for(;;counter = (counter+1) & DUTY_CICLE_MAX) {
         CLRWDT();
         
-        GPIObits.GP2 = on && (counter >= duty);
+        GPIObits.GP2 = on && (counter >= duties[duty]);
         
         if ((counter & BUTTON_CHECK_MASK) == 0) {
             check_buttons();
         }
-//        GPIObits.GP2 = (getButtons() != 0);
     }
     return;
 }
