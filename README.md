@@ -8,4 +8,4 @@ It consist of two push-buttons, one for increasing power, and another for decrea
 
 The design can be adapted for use in other similar applications. Be aware on the voltage and current of the device.
 
-**WARNING!** There are two kinds of power suppliers for led lamps: Voltages sources ans Current sources. This design is *ONLY* meant for the Voltage sources.
+**WARNING!** There are two kinds of power suppliers for led lamps: Voltages sources and Current sources. This design is *ONLY* meant for the Voltage sources.
