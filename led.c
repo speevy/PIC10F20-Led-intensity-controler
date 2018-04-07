@@ -10,7 +10,6 @@
 
 unsigned char counter;
 unsigned char duty;
-unsigned char on;
 unsigned int button_cnt;
 unsigned char last;
 
@@ -18,9 +17,15 @@ unsigned char last;
 #define BUTTON_CHECK_MASK 0x80
 #define DUTY_CICLE_MAX 0x3F
 
+/*
+ * Values totally inverted: first value is the max power, last value the min,
+ * and value of 0 is full power, value > DUTY_CICLE_MAX is off.
+ */
 const unsigned char duties[] = {
-    0x00, 0x10, 0x1A, 0x24, 0x2A, 0x34, 0x38, 0x3A, 0x40
+    0x00, 0x20, 0x30, 0x3A, 0x3D, 0x40
 } ;
+
+const unsigned char n_duties = sizeof(duties) - 1;
 
 void init() {
     OSCCAL &= 0xFE;
@@ -28,10 +33,9 @@ void init() {
     OPTION = 0b00011111;
     
     counter = 0;
-    duty = 3;
+    duty = n_duties;
     last = 0;
     button_cnt = 0;
-    on = 1;
  }
 
 unsigned char getButtons() {
@@ -64,10 +68,14 @@ void check_buttons () {
             if (duty) duty--;
             break;
         case 2:
-            if (duty < 8) duty++;
+            if (duty < n_duties) duty++;
             break;
         case 3:
-            on = !on;
+            if (duty == n_duties) {
+                duty = 1;
+            } else {
+                duty = n_duties;
+            }
             break;
     }
 
@@ -78,7 +86,7 @@ void main(void) {
     for(;;counter = (counter+1) & DUTY_CICLE_MAX) {
         CLRWDT();
         
-        GPIObits.GP2 = on && (counter >= duties[duty]);
+        GPIObits.GP2 = counter >= duties[duty];
         
         if ((counter & BUTTON_CHECK_MASK) == 0) {
             check_buttons();
