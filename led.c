@@ -13,18 +13,20 @@ unsigned char duty;
 unsigned int button_cnt;
 unsigned char last;
 
+// Constants for button bouncing filtering
 #define BUTTON_CNT 0x400
 #define BUTTON_CHECK_MASK 0x80
-#define DUTY_CICLE_MAX 0x3F
 
 /*
- * Values totally inverted: first value is the max power, last value the min,
- * and value of 0 is full power, value > DUTY_CICLE_MAX is off.
+ * Duty cicles definition
+ * Able to define as many steps as wanted
+ * value: 0 -> off, > DUTY_CICLE_MAX -> full power
+ * first value: min, last value: max
  */
+#define DUTY_CICLE_MAX 0x3F
 const unsigned char duties[] = {
-    0x00, 0x20, 0x30, 0x3A, 0x3D, 0x40
+    0x00, 0x02, 0x04, 0x10, 0x20, 0x40
 } ;
-
 const unsigned char n_duties = sizeof(duties) - 1;
 
 void init() {
@@ -33,11 +35,14 @@ void init() {
     OPTION = 0b00011111;
     
     counter = 0;
-    duty = n_duties;
+    duty = 0;
     last = 0;
     button_cnt = 0;
  }
 
+/*
+ * Button bouncing filter and conversion to flank
+ */
 unsigned char getButtons() {
     unsigned char current = (~GPIO) & 3;
     
@@ -48,6 +53,7 @@ unsigned char getButtons() {
         return 0;
     }
     
+    // Button bouncing filter
     if (current == last) {
         if (button_cnt < BUTTON_CNT) {
             button_cnt++;
@@ -60,21 +66,22 @@ unsigned char getButtons() {
     return 0;
 }
 
+/*
+ * Actions to do on button press
+ */
 void check_buttons () {
     switch (getButtons()) {
-        case 0 : 
-            break;
-        case 1:
-            if (duty) duty--;
-            break;
-        case 2:
+        case 1: // UP
             if (duty < n_duties) duty++;
             break;
-        case 3:
-            if (duty == n_duties) {
-                duty = 1;
+        case 2: // DOWN
+            if (duty) duty--;
+            break;
+        case 3: // BOTH
+            if (duty == 0) {
+                duty = n_duties - 1;
             } else {
-                duty = n_duties;
+                duty = 0;
             }
             break;
     }
@@ -86,7 +93,7 @@ void main(void) {
     for(;;counter = (counter+1) & DUTY_CICLE_MAX) {
         CLRWDT();
         
-        GPIObits.GP2 = counter >= duties[duty];
+        GPIObits.GP2 = counter < duties[duty];
         
         if ((counter & BUTTON_CHECK_MASK) == 0) {
             check_buttons();
