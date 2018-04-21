@@ -4,7 +4,9 @@ This project is for improving the IKEA JANSJÖ led light with power control. Inc
 
 I have build myself the circuit using a prototyping board of 15 x 4 tenths of an inch, that fits inside the original lamp switch.
 
-It consist of two push-buttons, one for increasing power, and another for decreasing. Pressing the two buttons at the same time switches on and off the ligth. (On switch on, recovers the previous power setting)
+I have also designed a 2 layer pcb board for smd components with micro-usb port for programming the pic. (Not tested yet, boards are on the way)
+
+It consist of two push-buttons, one for increasing power, and another for decreasing. Pressing the two buttons at the same time switches on and off the ligth.
 
 The design can be adapted for use in other similar applications. Be aware on the voltage and current of the device.
 
