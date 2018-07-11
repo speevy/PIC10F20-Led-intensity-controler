@@ -35,7 +35,7 @@ void init() {
     OPTION = 0b00011111;
     
     counter = 0;
-    duty = 0;
+    duty = 1;
     last = 0;
     button_cnt = 0;
  }
@@ -71,11 +71,11 @@ unsigned char getButtons() {
  */
 void check_buttons () {
     switch (getButtons()) {
-        case 1: // UP
-            if (duty < n_duties) duty++;
-            break;
-        case 2: // DOWN
+        case 1: // DOWN
             if (duty) duty--;
+            break;
+        case 2: // UP
+            if (duty < n_duties) duty++;
             break;
         case 3: // BOTH
             if (duty == 0) {
@@ -88,7 +88,8 @@ void check_buttons () {
 
 }
 void main(void) {
-    if (STATUSbits.nTO) init();
+    //if (STATUSbits.nTO) 
+    init();
     
     for(;;counter = (counter+1) & DUTY_CICLE_MAX) {
         CLRWDT();
