@@ -10,4 +10,8 @@ It consist of two push-buttons, one for increasing power, and another for decrea
 
 The design can be adapted for use in other similar applications. Be aware on the voltage and current of the device.
 
-**WARNING!** There are two kinds of power suppliers for led lamps: Voltages sources and Current sources. This design is *ONLY* meant for the Voltage sources.
+**WARNING!** There are two kinds of power suppliers for LED lamps: Voltage sources and current sources. This design is *ONLY* meant for the Voltage sources.
+
+_UPDATE_: Having seen the teardown of the device in this video: https://www.youtube.com/watch?v=H4aymFmak9Y I realized that although this circuit is powered by a voltage source, is later converted to current source to drive the LED.
+
+Having seen the comments on the video, seems that the main point of failure of the lamp are the switches (already fixed that ;)) and the power supply. There also seem that the driver chips are able to work at 5V, so the design could be rebuild to power the lamp from uUSB connector, using standard USB power supplies.
