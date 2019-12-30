@@ -35,7 +35,7 @@ void init() {
     OPTION = 0b00011111;
     
     counter = 0;
-    duty = 1;
+    duty = 0;
     last = 0;
     button_cnt = 0;
  }
@@ -88,8 +88,8 @@ void check_buttons () {
 
 }
 void main(void) {
-    //if (STATUSbits.nTO) 
-    init();
+    if (STATUSbits.nTO) 
+        init();
     
     for(;;counter = (counter+1) & DUTY_CICLE_MAX) {
         CLRWDT();
